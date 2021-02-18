@@ -1,29 +1,85 @@
 from emulator_backend import Adafruit_NeoPixel
 from neopixel_effects import NeoPixel_Effects
 
-def run():
-    pixels = Adafruit_NeoPixel(51,6,"NEO_GRB + NEO_KHZ800")
-    effects = NeoPixel_Effects(pixels)
-    pixels.begin()
+import requests
+import json
+from pprint import pprint
+
+pixels = Adafruit_NeoPixel(51,6,"NEO_GRB + NEO_KHZ800")
+effects = NeoPixel_Effects(pixels)
+
+def rainBehaviour() :
     pixels.setBrightness(100)
-    pixels.setPixelColor(2,pixels.Color(255,200,10))
-    pixels.show()
-    pixels.delay(200)
-    pixels.fill(pixels.Color(150,60,10),4,10)
-    pixels.show()
-    pixels.delay(1000)
-    pixels.clear()
-    effects.colorWipe(pixels.Color(200,12,70),50)
-    pixels.setBrightness(70)
-    pixels.clear()
-    pixels.show()
-    pixels.delay(1000)
-    for i in range(5):
-        effects.colorWipe(pixels.Color(200,0,200),10)
-        pixels.clear()
-    pixels.setBrightness(90)
-    effects.rainbow(20)
-    effects.colorWipe(pixels.Color(150,150,0),40)
-    effects.rainbowCycle(20,2)
+    even = True;
+    odd = False;
+
+    while True :
+        for i in range(51):
+            if i % 2 == 0 :
+                if even :
+                    pixels.setPixelColor( i, pixels.Color(65, 105, 225) )
+                else :
+                    pixels.setPixelColor( i, pixels.Color(20, 20, 205) )
+                even = not even
+            else :
+                if odd :
+                    pixels.setPixelColor( i, pixels.Color(65, 105, 225) )
+                else :
+                    pixels.setPixelColor( i, pixels.Color(20, 20, 205) )
+                odd = not odd
+            pixels.show()
+
+        pixels.show()
+        pixels.delay(3)
+
+def run():
+    pixels.begin()
+
+    API_KEY = '31fd8c74992a33f319e0a38eb52f03c7';
+    CITY_QUERY = "Toronto, CA";
+    REQUEST_URL = "https://api.openweathermap.org/data/2.5/weather?q=" + CITY_QUERY + "&appid=" + API_KEY;
+    req = requests.get(
+        REQUEST_URL
+    );
+
+    jsonMap = req.json()
+
+
+    #pprint(jsonMap);
+
+    # TODO: Safely get results in map
+    try:
+      weatherData = jsonMap["list"][0]["weather"][0]
+    except:
+        try:
+          weatherData = jsonMap["weather"][0]
+        except:
+            print("Wrong Data Received")
+
+    weatherID = weatherData["id"]
+
+    # Weather and Corresponding Ids (https://openweathermap.org/weather-conditions)
+    # Thunder Storm
+    if int(weatherID / 100) == 2 :
+        print("Pplaceholder")
+    # Drizzle
+    elif int(weatherID / 100) == 3:
+        print("Pplaceholder")
+    # Rain
+    elif int(weatherID / 100) == 5:
+        rainBehaviour()
+    # Snow
+    elif int(weatherID / 100) == 6:
+        print("Pplaceholder")
+    # Atmosphere
+    elif int(weatherID / 100) == 7:
+        print("Pplaceholder")
+    # Clear
+    elif int(weatherID) == 800:
+        print("Pplaceholder")
+    # Clouds
+    elif int(weatherID / 10) == 80:
+        print("Pplaceholder")
+
 
 run()
