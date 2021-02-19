@@ -27,7 +27,8 @@ CRGB leds[NUM_LEDS];
 
 void setup() {
   delay(3000); // 3 second delay for recovery
-  
+  Serial.begin(9600);
+  pinMode(5, INPUT);
   // tell FastLED about the LED strip configuration
   FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   //FastLED.addLeds<LED_TYPE,DATA_PIN,CLK_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
@@ -46,6 +47,9 @@ uint8_t gHue = 0; // rotating "base color" used by many of the patterns
   
 void loop()
 {
+  int val = analogRead(A3);
+  Serial.println(val);
+  if (val > 600) {
   // Call the current pattern function once, updating the 'leds' array
   gPatterns[gCurrentPatternNumber]();
 
@@ -57,6 +61,12 @@ void loop()
   // do some periodic updates
   EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
   EVERY_N_SECONDS( 10 ) { nextPattern(); } // change patterns periodically
+  } else {
+    for (int i = 0; i < NUM_LEDS; i++) {
+      leds[i] = CRGB::Black;
+      }
+      FastLED.show();
+    }
 }
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
