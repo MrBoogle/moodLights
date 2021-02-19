@@ -21,7 +21,7 @@ GPIO.setup(25, GPIO.OUT)
 
 
 #This is sensitive data, will change with final pull, at the moment it doesnt matter
-aio = Client('MrBoogle', 'aio_pDvY43q89eRdG7XljtLb1RKLI5SP')
+
 
 
 
