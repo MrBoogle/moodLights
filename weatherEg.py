@@ -1,3 +1,5 @@
+import requests
+
 def rainBehaviour() :
     pixels.setBrightness(100)
     even = True;
