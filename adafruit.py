@@ -6,17 +6,24 @@ import requests
 
 GPIO.setmode(GPIO.BCM)
 #Sets pins 25 and 22 as outputs
-GPIO.setup(25, GPIO.OUT)
 GPIO.setup(22, GPIO.OUT)
+GPIO.setup(23, GPIO.OUT)
+GPIO.setup(24, GPIO.OUT)
+GPIO.setup(25, GPIO.OUT)
 
 #Modes:
-# [GPIO22, GPIO23, GPIO24, GPIO25] = [0, 0, 0, 0] --> Default mode, shows relaxing aura based on time
-#[GPIO22, GPIO23, GPIO24, GPIO25] = [0, 0, 0, 1] --> Weather mode, triggered by G home and
-
+# [GPIO22, GPIO23, GPIO24, GPIO25] = [0, 0, 0, 0] --> Default mode
+# [GPIO22, GPIO23, GPIO24, GPIO25] = [0, 0, 0, 1] --> Thunder 
+#[GPIO22, GPIO23, GPIO24, GPIO25] = [0, 0, 1, 0] --> Rain/Drizzle
+#[GPIO22, GPIO23, GPIO24, GPIO25] = [0, 0, 1, 1] --> Snow
+#[GPIO22, GPIO23, GPIO24, GPIO25] = [0, 1, 0, 0] --> Clear
+#[GPIO22, GPIO23, GPIO24, GPIO25] = [0, 1, 0, 1] --> Clouds 
 
 
 #This is sensitive data, will change with final pull, at the moment it doesnt matter
-aio = Client('MrBoogle', 'aio_tXHi39ob3RXqoI7p8aA0VafxN3Mt')
+aio = Client('MrBoogle', 'aio_dhnt10VALnVRAZBubZlxi2KWDkDQ')
+
+
 
 
 #fetches weather data
@@ -29,53 +36,68 @@ req = requests.get(
 
 jsonMap = req.json()
 
-
-try:
-  weatherData = jsonMap["list"][0]["weather"][0]
-except:
-    try:
-      weatherData = jsonMap["weather"][0]
-    except:
-        print("Wrong Data Received")
-
-weatherID = weatherData["id"]
-
-# Weather and Corresponding Ids (https://openweathermap.org/weather-conditions)
-# Thunder Storm
-if int(weatherID / 100) == 2 :
-    print("Pplaceholder")
-# Drizzle
-elif int(weatherID / 100) == 3:
-    print("Pplaceholder")
-# Rain
-elif int(weatherID / 100) == 5:
-    rainBehaviour()
-# Snow
-elif int(weatherID / 100) == 6:
-    print("Pplaceholder")
-# Atmosphere
-elif int(weatherID / 100) == 7:
-    print("Pplaceholder")
-# Clear
-elif int(weatherID) == 800:
-    print("Pplaceholder")
-# Clouds
-elif int(weatherID / 10) == 80:
-    print("Pplaceholder")
-
-
-
+#Always check if G Home is used
 while True:
     dataIn = aio.receive('ifttt').value
-    if int(dataIn) == 1:
-        #heres an example of setting an pin as High and low
-        GPIO.output(25, GPIO.HIGH)
-    else:
-        GPIO.output(25, GPIO.LOW)
+
+    try:
+      weatherData = jsonMap["list"][0]["weather"][0]
+    except:
+        try:
+          weatherData = jsonMap["weather"][0]
+        except:
+            print("Wrong Data Received")
+
+    weatherID = weatherData["id"]
     
-    GPIO.output(22, int(dataIn))
-    print(dataIn)
-    # set GPIO24 to 1/GPIO.HIGH/True  
-    #sleep(0.5)                 # wait half a second  
-    #GPIO.output(24, 0)         # set GPIO24 to 0/GPIO.LOW/False  
-    #sleep(0.5) 
+    # Weather and Corresponding Ids (https://openweathermap.org/weather-conditions)
+    # Thunder Storm
+    if int(weatherID / 100) == 2 and dataIn == 1:
+        print("Thunder")
+        GPIO.output(22, GPIO.LOW)
+        GPIO.output(23, GPIO.LOW)
+        GPIO.output(24, GPIO.LOW)
+        GPIO.output(25, GPIO.HIGH)
+        
+    # Drizzle
+    elif int(weatherID / 100) == 3:
+        print("Drizzle")
+        GPIO.output(22, GPIO.LOW)
+        GPIO.output(23, GPIO.LOW)
+        GPIO.output(24, GPIO.HIGH)
+        GPIO.output(25, GPIO.LOW)
+    # Rain
+    elif int(weatherID / 100) == 5:
+        #rainBehaviour()
+        print("Rain")
+        GPIO.output(22, GPIO.LOW)
+        GPIO.output(23, GPIO.LOW)
+        GPIO.output(24, GPIO.HIGH)
+        GPIO.output(25, GPIO.LOW)
+    # Snow
+    elif int(weatherID / 100) == 6:
+        print("Snow")
+        GPIO.output(22, GPIO.LOW)
+        GPIO.output(23, GPIO.LOW)
+        GPIO.output(24, GPIO.HIGH)
+        GPIO.output(25, GPIO.HIGH)
+    # Atmosphere
+    elif int(weatherID / 100) == 7:
+        print("Pplaceholder")
+    # Clear
+    elif int(weatherID) == 800:
+        print("Clear")
+        GPIO.output(22, GPIO.LOW)
+        GPIO.output(23, GPIO.HIGH)
+        GPIO.output(24, GPIO.LOW)
+        GPIO.output(25, GPIO.LOW)
+    # Clouds
+    elif int(weatherID / 10) == 80:
+        print("Cloudy")
+        GPIO.output(22, GPIO.LOW)
+        GPIO.output(23, GPIO.HIGH)
+        GPIO.output(24, GPIO.LOW)
+        GPIO.output(25, GPIO.HIGH)
+
+
+
