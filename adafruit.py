@@ -21,7 +21,7 @@ GPIO.setup(25, GPIO.OUT)
 
 
 #This is sensitive data, will change with final pull, at the moment it doesnt matter
-aio = Client('MrBoogle', 'aio_dhnt10VALnVRAZBubZlxi2KWDkDQ')
+aio = Client('MrBoogle', 'aio_pDvY43q89eRdG7XljtLb1RKLI5SP')
 
 
 
@@ -39,7 +39,7 @@ jsonMap = req.json()
 #Always check if G Home is used
 while True:
     dataIn = aio.receive('ifttt').value
-
+    print(dataIn)
     try:
       weatherData = jsonMap["list"][0]["weather"][0]
     except:
@@ -51,8 +51,14 @@ while True:
     weatherID = weatherData["id"]
     
     # Weather and Corresponding Ids (https://openweathermap.org/weather-conditions)
+    if int(dataIn) != 1:
+        print("default")
+        GPIO.output(22, GPIO.LOW)
+        GPIO.output(23, GPIO.LOW)
+        GPIO.output(24, GPIO.LOW)
+        GPIO.output(25, GPIO.LOW)
     # Thunder Storm
-    if int(weatherID / 100) == 2 and dataIn == 1:
+    if int(weatherID / 100) == 2 and int(dataIn) == 1:
         print("Thunder")
         GPIO.output(22, GPIO.LOW)
         GPIO.output(23, GPIO.LOW)
@@ -60,14 +66,14 @@ while True:
         GPIO.output(25, GPIO.HIGH)
         
     # Drizzle
-    elif int(weatherID / 100) == 3:
+    elif int(weatherID / 100) == 3 and int(dataIn) == 1:
         print("Drizzle")
         GPIO.output(22, GPIO.LOW)
         GPIO.output(23, GPIO.LOW)
         GPIO.output(24, GPIO.HIGH)
         GPIO.output(25, GPIO.LOW)
     # Rain
-    elif int(weatherID / 100) == 5:
+    elif int(weatherID / 100) == 5 and int(dataIn) == 1:
         #rainBehaviour()
         print("Rain")
         GPIO.output(22, GPIO.LOW)
@@ -75,14 +81,14 @@ while True:
         GPIO.output(24, GPIO.HIGH)
         GPIO.output(25, GPIO.LOW)
     # Snow
-    elif int(weatherID / 100) == 6:
+    elif int(weatherID / 100) == 6 and int(dataIn) == 1:
         print("Snow")
         GPIO.output(22, GPIO.LOW)
         GPIO.output(23, GPIO.LOW)
         GPIO.output(24, GPIO.HIGH)
         GPIO.output(25, GPIO.HIGH)
     # Atmosphere
-    elif int(weatherID / 100) == 7:
+    elif int(weatherID / 100) == 7 and int(dataIn) == 1:
         print("Pplaceholder")
     # Clear
     elif int(weatherID) == 800:
@@ -92,7 +98,7 @@ while True:
         GPIO.output(24, GPIO.LOW)
         GPIO.output(25, GPIO.LOW)
     # Clouds
-    elif int(weatherID / 10) == 80:
+    elif int(weatherID / 10) == 80 and int(dataIn) == 1:
         print("Cloudy")
         GPIO.output(22, GPIO.LOW)
         GPIO.output(23, GPIO.HIGH)
