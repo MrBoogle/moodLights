@@ -117,40 +117,37 @@ void lightning () {
       leds[96] = leds[80] = leds[64] = leds[48] = leds[34] = leds[18] = leds[2] = CRGB::Black;
   }
 
-int positions[7];
-bool resetFlag = true;
+
 void snow () {
-
-  //Set all leds to blue
-    for (int i= 0; i < NUM_LEDS; i++) {
-      leds[i] = CRGB(0, 0, 255);
-    }
-
-    
+  int positions[7];
   int fullRotation = 141-127;
+
+    //Set all leds to blue
+   for (int i= 0; i < NUM_LEDS; i++) {
+     leds[i] = CRGB(0, 0, 255);
+   }
+
+  for (int i= 0; i < fullRotation/2; i++) {
+     positions[i] = fullRotation*random() + 127;
+     led[ positions[i] ]
+  }
+
   
-  //Set positions to emulate snow falling
-  if (resetFlag) {
-    for (int i = 0; i < fullRotation/2; i++) {
-      positions[i]  = fullRotation*random() + 127;
-    }
-    resetFlag = false;
-  }else {
+
+  while (true) {
     for (int i = 0; i < fullRotation/2; i++) {
       positions[i]  -= fullRotation;
       if (positions[i] < 0) {
         positions[i] = -1;
-        resetFlag = true;
+        goto loopBreak;
       }
+      leds[ positions[i] ] = CRGB(235, 235, 255);
     }
-  }
-
-  for (int i = 0; i < fullRotation/2; i++) {
-    int pos = positions[i];
-    leds[pos] = CRGB(235, 235, 255);
-   }
 
    FastLED.delay(50);
+  }
+
+  loopBreak: return;
   
 }
 
