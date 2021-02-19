@@ -39,7 +39,7 @@ void setup() {
 
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*SimplePatternList[])();
-SimplePatternList gPatterns = { rainbow, rainbowWithGlitter, confetti, sinelon, juggle, bpm };
+SimplePatternList gPatterns = {   rain };
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 uint8_t gHue = 0; // rotating "base color" used by many of the patterns
@@ -71,6 +71,29 @@ void rainbow()
 {
   // FastLED's built-in rainbow generator
   fill_rainbow( leds, NUM_LEDS, gHue, 7);
+}
+
+void rain()
+{
+  for (int i = 110; i < NUM_LEDS; i++) {
+    leds[i] = CRGB::Gray;
+    }
+    for (int i = 0; i < 110; i++) {
+    leds[i] = CRGB::Black;
+    }
+    
+    //96, 80, 64, 48, 32, 16, 0
+    
+    for (int i = 96; i >= 0; i-=16) { 
+    leds[i+2] = leds[i+4] = leds[i+6] = leds[i+8] = leds[i+12] = leds[i+10] = leds[i+14] = leds[i] = CRGB::Blue;
+    //leds[i+2] = leds[i+4] = leds[i+6] = leds[i+8]
+    FastLED.delay(200);
+    if (i != 0) {
+    leds[i+2-16] = leds[i+4-16] = leds[i+6-16] = leds[i+8-16] = leds[i-16] = leds[i+12-16] = leds[i+10-16] = leds[i+14-16] = CRGB::Blue;}
+    leds[i+2] = leds[i+4] = leds[i+6] = leds[i+8] = leds[i+12] = leds[i+10] = leds[i+14]= leds[i] = CRGB::Black;
+    FastLED.delay(200);
+    }
+    
 }
 
 void rainbowWithGlitter() 
