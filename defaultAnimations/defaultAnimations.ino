@@ -49,11 +49,8 @@ void setup() {
 
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*SimplePatternList[])();
-<<<<<<< HEAD
-SimplePatternList gPatterns = { snow};
-=======
-SimplePatternList gPatterns = {rain, lightning, snow, ambient, fire};
->>>>>>> 7725a15d1c0c7d723af2a61a5305e8ddca34700b
+
+SimplePatternList gPatterns = {rain, lightning, snow, ambient};
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 uint8_t gHue = 0; // rotating "base color" used by many of the patterns
@@ -155,6 +152,7 @@ void snow () {
   for (int i= 0; i < fullRotation/2; i++) {
      positions[i] = fullRotation*random() + 127;
      leds[ positions[i] ];
+     //led[ positions[i] ]
   }
 
   
@@ -227,26 +225,21 @@ void juggle() {
   }
 }
 
-/*#define Holly_Green 0x00580c
+#define Holly_Green 0x00580c
 #define Holly_Red   0xB00402
 const TProgmemRGBPalette16 Holly_p FL_PROGMEM =
 {  Holly_Green, Holly_Green, Holly_Green, Holly_Green, 
    Holly_Green, Holly_Green, Holly_Green, Holly_Green, 
    Holly_Green, Holly_Green, Holly_Green, Holly_Green, 
    Holly_Green, Holly_Green, Holly_Green, Holly_Red 
-};*/
+};
 
 void ambient() {
-  CRGBPallete16 palette = Holly_p;
+  CRGBPalette16 palette = Holly_p;
    for (int i= 0; i < NUM_LEDS; i++) {
     //No clue what this'll due
      leds[i] = ColorFromPalette(palette, gHue+(i*2), gHue+(i*10));
    }
-}
-
-void fire(){
-  //Let's see how it looks
-  Fire2012WithPalette();
 }
 
  
