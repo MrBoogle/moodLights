@@ -66,10 +66,10 @@ void loop()
       //restartthereceiver
       }
 
-  delay(3000);
+  delay(50);
   
   int val = analogRead(A3);
-  //Serial.println(val);
+  Serial.println(val);
   if (val > 600) {
   // Call the current pattern function once, updating the 'leds' array
   gPatterns[gCurrentPatternNumber]();
@@ -150,7 +150,7 @@ void snow () {
 
   for (int i= 0; i < fullRotation/2; i++) {
      positions[i] = fullRotation*random() + 127;
-     led[ positions[i] ]
+     leds[ positions[i] ];
   }
 
   
@@ -165,7 +165,7 @@ void snow () {
       leds[ positions[i] ] = CRGB(235, 235, 255);
     }
 
-   FastLED.delay(50);
+   FastLED.delay(5);
   }
 
   loopBreak: return;
