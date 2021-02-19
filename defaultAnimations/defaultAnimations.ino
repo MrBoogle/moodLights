@@ -1,5 +1,14 @@
 #include <FastLED.h>
 
+#include<IRLibRecv.h>
+
+IRrecv MyReceiver(11);
+//Createthereceiver.Usepin2
+#include<IRLibDecodeBase.h>
+#include<IRLib_P01_NEC.h>
+#include<IRLibCombo.h>
+IRdecode MyDecoder;
+
 FASTLED_USING_NAMESPACE
 
 // FastLED "100-lines-of-code" demo reel, showing just a few 
@@ -28,7 +37,7 @@ CRGB leds[NUM_LEDS];
 void setup() {
   delay(3000); // 3 second delay for recovery
   Serial.begin(9600);
-  pinMode(5, INPUT);
+  MyReceiver.enableIRIn();//startreceiving
   // tell FastLED about the LED strip configuration
   FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   //FastLED.addLeds<LED_TYPE,DATA_PIN,CLK_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
@@ -40,15 +49,27 @@ void setup() {
 
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*SimplePatternList[])();
-SimplePatternList gPatterns = {rain, lightning, snow};
+SimplePatternList gPatterns = { snow};
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 uint8_t gHue = 0; // rotating "base color" used by many of the patterns
   
 void loop()
 {
+
+  if(MyReceiver.getResults()){
+      //waittillitreturnstrue
+      MyDecoder.decode();
+      //MyDecoder.dumpResults();
+      Serial.println(MyDecoder.value);
+      MyReceiver.enableIRIn();
+      //restartthereceiver
+      }
+
+  delay(3000);
+  
   int val = analogRead(A3);
-  Serial.println(val);
+  //Serial.println(val);
   if (val > 600) {
   // Call the current pattern function once, updating the 'leds' array
   gPatterns[gCurrentPatternNumber]();
