@@ -149,6 +149,8 @@ void snow () {
     int pos = positions[i];
     leds[pos] = CRGB(235, 235, 255);
    }
+
+   FastLED.delay(50);
   
 }
 
