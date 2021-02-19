@@ -39,7 +39,7 @@ void setup() {
 
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*SimplePatternList[])();
-SimplePatternList gPatterns = {rain, lightning};
+SimplePatternList gPatterns = {rain, lightning, snow};
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 uint8_t gHue = 0; // rotating "base color" used by many of the patterns
@@ -105,10 +105,42 @@ void lightning () {
       leds[96] = leds[80] = leds[64] = leds[48] = leds[34] = leds[18] = leds[2] = CRGB::White;
       FastLED.delay(150);
       leds[96] = leds[80] = leds[64] = leds[48] = leds[34] = leds[18] = leds[2] = CRGB::Black;
-      
-    
-  
   }
+
+int positions[7];
+bool resetFlag = true;
+void snow () {
+
+  //Set all leds to blue
+    for (int i= 0; i < NUM_LEDS; i++) {
+      leds[i] = CRGB(0, 0, 255);
+    }
+
+    
+  int fullRotation = 141-127;
+  
+  //Set positions to emulate snow falling
+  if (resetFlag) {
+    for (int i = 0; i < fullRotation/2; i++) {
+      positions[i]  = fullRotation*random() + 127;
+    }
+    resetFlag = false;
+  }else {
+    for (int i = 0; i < fullRotation/2; i++) {
+      positions[i]  -= fullRotation;
+      if (positions[i] < 0) {
+        positions[i] = -1;
+        resetFlag = true;
+      }
+    }
+  }
+
+  for (int i = 0; i < fullRotation/2; i++) {
+    int pos = positions[i];
+    leds[pos] = CRGB(235, 235, 255);
+   }
+  
+}
 
 void rainbowWithGlitter() 
 {
