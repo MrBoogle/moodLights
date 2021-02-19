@@ -50,7 +50,7 @@ void setup() {
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*SimplePatternList[])();
 
-SimplePatternList gPatterns = {rain, lightning, snow, ambient};
+SimplePatternList gPatterns = {defaultMode, lightning, rain, snow, clearMode, clouds, ambient};
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 uint8_t gHue = 0; // rotating "base color" used by many of the patterns
@@ -68,10 +68,36 @@ void loop()
       }
 
   delay(50);
+  Serial.println(analogRead(A0));
+  Serial.println(analogRead(A1));
+  Serial.println(analogRead(A2));
+  Serial.println(analogRead(A3));
+  Serial.println("---");
+  //Could use map for better code but arduino barely has any memory
+  // > 600 means pin is high
+  if (analogRead(A0) < 600 && analogRead(A1) < 600 && analogRead(A2) < 600 && analogRead(A3) == 0) {
+    gCurrentPatternNumber = 0;
+    } 
+  if (analogRead(A0) < 600 && analogRead(A1) < 600 && analogRead(A2) < 600 && analogRead(A3) > 600) {
+    gCurrentPatternNumber = 1;
+    } 
+  if (analogRead(A0) < 600 && analogRead(A1) < 600 && analogRead(A2) > 600 && analogRead(A3) < 600) {
+    gCurrentPatternNumber = 2;
+    } 
+  if (analogRead(A0) < 600 && analogRead(A1) < 600 && analogRead(A2) > 600 && analogRead(A3) > 600) {
+    gCurrentPatternNumber = 3;
+    } 
+  if (analogRead(A0) < 600 && analogRead(A1) > 600 && analogRead(A2) < 600 && analogRead(A3) == 0) {
+    gCurrentPatternNumber = 4;
+    } 
+  if (analogRead(A0) < 600 && analogRead(A1) > 600 && analogRead(A2) < 600 && analogRead(A3) > 600) {
+    gCurrentPatternNumber = 5;
+    } 
+
   
-  int val = analogRead(A3);
-  Serial.println(val);
-  if (val > 600) {
+  
+  
+  
   // Call the current pattern function once, updating the 'leds' array
   gPatterns[gCurrentPatternNumber]();
 
@@ -82,13 +108,8 @@ void loop()
 
   // do some periodic updates
   EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
-  EVERY_N_SECONDS( 10 ) { nextPattern(); } // change patterns periodically
-  } else {
-    for (int i = 0; i < NUM_LEDS; i++) {
-      leds[i] = CRGB::Black;
-      }
-      FastLED.show();
-    }
+  //EVERY_N_SECONDS( 10 ) { nextPattern(); } // change patterns periodically
+  
 }
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
@@ -98,6 +119,18 @@ void nextPattern()
   // add one to the current pattern number, and wrap around at the end
   gCurrentPatternNumber = (gCurrentPatternNumber + 1) % ARRAY_SIZE( gPatterns);
 }
+
+void defaultMode() {
+  sinelon();
+  }
+
+void clearMode() {
+  
+  }
+
+void clouds() {
+  
+  }
 
 void rainbow() 
 {
