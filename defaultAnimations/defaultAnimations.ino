@@ -39,7 +39,7 @@ void setup() {
 
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*SimplePatternList[])();
-SimplePatternList gPatterns = {   rain };
+SimplePatternList gPatterns = {rain, lightning};
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 uint8_t gHue = 0; // rotating "base color" used by many of the patterns
@@ -83,7 +83,7 @@ void rain()
     }
     
     //96, 80, 64, 48, 32, 16, 0
-    
+  
     for (int i = 96; i >= 0; i-=16) { 
     leds[i+2] = leds[i+4] = leds[i+6] = leds[i+8] = leds[i+12] = leds[i+10] = leds[i+14] = leds[i] = CRGB::Blue;
     //leds[i+2] = leds[i+4] = leds[i+6] = leds[i+8]
@@ -95,6 +95,20 @@ void rain()
     }
     
 }
+
+void lightning () {
+  rain();
+  leds[96] = leds[80] = leds[64] = leds[49] = leds[34] = leds[18] = leds[2] = CRGB::White;
+      FastLED.delay(150);
+      leds[96] = leds[80] = leds[64] = leds[48] = leds[34] = leds[18] = leds[2] = CRGB::Black;
+      FastLED.delay(50);
+      leds[96] = leds[80] = leds[64] = leds[48] = leds[34] = leds[18] = leds[2] = CRGB::White;
+      FastLED.delay(150);
+      leds[96] = leds[80] = leds[64] = leds[48] = leds[34] = leds[18] = leds[2] = CRGB::Black;
+      
+    
+  
+  }
 
 void rainbowWithGlitter() 
 {
