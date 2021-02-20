@@ -2,7 +2,7 @@
 
 #include<IRLibRecv.h>
 
-IRrecv MyReceiver(11);
+IRrecv MyReceiver(8);
 //Createthereceiver.Usepin2
 #include<IRLibDecodeBase.h>
 #include<IRLib_P01_NEC.h>
@@ -51,9 +51,12 @@ void setup() {
 typedef void (*SimplePatternList[])();
 
 SimplePatternList gPatterns = {defaultMode, lightning, rain, snow, clearMode, cloudy, ambient};
+SimplePatternList dPatterns = {Fire2012, juggle, bpm, sinelon};
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 uint8_t gHue = 0; // rotating "base color" used by many of the patterns
+
+uint8_t dCurrentPatternNumber = 0;
 
 bool notif = false;
   
@@ -63,18 +66,20 @@ void loop()
   if(MyReceiver.getResults()){
       //waittillitreturnstrue
       MyDecoder.decode();
-      //MyDecoder.dumpResults();
+      MyDecoder.dumpResults();
       Serial.println(MyDecoder.value);
       MyReceiver.enableIRIn();
       //restartthereceiver
       }
 
-  delay(50);
+      
+
+  /*delay(50);
   Serial.println(analogRead(A0));
   Serial.println(analogRead(A1));
   Serial.println(analogRead(A2));
   Serial.println(analogRead(A3));
-  Serial.println("---");
+  Serial.println("---");*/
   //Could use map for better code but arduino barely has any memory
   // > 600 means pin is high
 
@@ -104,6 +109,7 @@ void loop()
     } else {
       notif = false;
       }
+     notif = true;
   
   
   
@@ -119,7 +125,7 @@ void loop()
 
   // do some periodic updates
   EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
-  //EVERY_N_SECONDS( 10 ) { nextPattern(); } // change patterns periodically
+   // change patterns periodically
   
 }
 
@@ -128,12 +134,14 @@ void loop()
 void nextPattern()
 {
   // add one to the current pattern number, and wrap around at the end
-  gCurrentPatternNumber = (gCurrentPatternNumber + 1) % ARRAY_SIZE( gPatterns);
+  dCurrentPatternNumber = (dCurrentPatternNumber + 1) % ARRAY_SIZE( dPatterns);
 }
 
 void defaultMode() {
- // sinelon();
-  bpm();
+  EVERY_N_SECONDS( 60 ) { nextPattern(); }
+  dPatterns[dCurrentPatternNumber]();
+  //sinelon();
+  //bpm();
   //juggle();
   }
 
@@ -253,9 +261,7 @@ void blue_skies () {
    for (int i= 0; i < NUM_LEDS; i++) {
      leds[i] = CRGB(0, 0, 255);
    }
-   if (notif) {
-    notification(255, 0, 0);
-    }
+   
 }
 
 void addSun () {
@@ -267,12 +273,10 @@ void addSun () {
   leds[i] = CRGB::Yellow;
   }
   leds[98+j] = CRGB::Yellow;
-  leds[127] = CRGB::Yellow;
+  leds[127] = leds[140] = leds[126] = leds[125] = leds[124] = leds[109] = leds[110] = CRGB::Yellow;
   }
 
-  if (notif) {
-    notification(255, 0, 0);
-    }
+  
 }
 
 void clearMode () {
@@ -301,10 +305,16 @@ void cloudy() {
 }
 
 void notification (int r, int g, int b) {
-  leds[81] = CRGB(r, g, b);
+  /*leds[81] = CRGB(r, g, b);
   leds[77] = CRGB(r, g, b);
   leds[73] = CRGB(r, g, b);
-  leds[69] = CRGB(r, g, b);
+  leds[69] = CRGB(r, g, b);*/
+
+
+  fadeToBlackBy( leds, NUM_LEDS, 20);
+  int pos = beatsin16( 5, 0, NUM_LEDS-1 );
+  leds[pos] = CRGB( r, g, b);
+  
   }
 
 
@@ -350,6 +360,9 @@ void bpm()
   for( int i = 0; i < NUM_LEDS; i++) { //9948
     leds[i] = ColorFromPalette(palette, gHue+(i*2), beat-gHue+(i*10));
   }
+  if (notif) {
+    notification(255, 255, 255);
+    }
 }
 
 void juggle() {
@@ -360,6 +373,10 @@ void juggle() {
     leds[beatsin16( i+7, 0, NUM_LEDS-1 )] |= CHSV(dothue, 200, 255);
     dothue += 32;
   }
+
+  if (notif) {
+    notification(0, 0, 0);
+    }
 }
 
 #define Holly_Green 0x00580c
@@ -378,5 +395,53 @@ void ambient() {
      leds[i] = ColorFromPalette(palette, gHue+(i*2), gHue+(i*10));
    }
 }
+
+bool gReverseDirection = false;
+#define SPARKING 120
+#define COOLING  55
+
+
+
+
+
+
+void Fire2012()
+{
+// Array of temperature readings at each simulation cell
+  static byte heat[NUM_LEDS];
+
+  // Step 1.  Cool down every cell a little
+    for( int i = 0; i < NUM_LEDS; i++) {
+      heat[i] = qsub8( heat[i],  random8(0, ((COOLING * 10) / NUM_LEDS) + 2));
+    }
+  
+    // Step 2.  Heat from each cell drifts 'up' and diffuses a little
+    for( int k= NUM_LEDS - 1; k >= 2; k--) {
+      heat[k] = (heat[k - 1] + heat[k - 2] + heat[k - 2] ) / 3;
+    }
+    
+    // Step 3.  Randomly ignite new 'sparks' of heat near the bottom
+    if( random8() < SPARKING ) {
+      int y = random8(7);
+      heat[y] = qadd8( heat[y], random8(160,255) );
+    }
+
+    // Step 4.  Map from heat cells to LED colors
+    for( int j = 0; j < NUM_LEDS; j++) {
+      CRGB color = HeatColor( heat[j]);
+      int pixelnumber;
+      if( gReverseDirection ) {
+        pixelnumber = (NUM_LEDS-1) - j;
+      } else {
+        pixelnumber = j;
+      }
+      leds[pixelnumber] = color;
+    }
+
+    if (notif) {
+    notification(0 ,0, 255);
+    }
+}
+
 
  
