@@ -54,6 +54,8 @@ SimplePatternList gPatterns = {defaultMode, lightning, rain, snow, clearMode, cl
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 uint8_t gHue = 0; // rotating "base color" used by many of the patterns
+
+bool notif = false;
   
 void loop()
 {
@@ -68,17 +70,17 @@ void loop()
       }
 
   delay(50);
-  /*Serial.println(analogRead(A0));
+  Serial.println(analogRead(A0));
   Serial.println(analogRead(A1));
   Serial.println(analogRead(A2));
   Serial.println(analogRead(A3));
-  Serial.println("---");*/
+  Serial.println("---");
   //Could use map for better code but arduino barely has any memory
   // > 600 means pin is high
 
   //defaultMode
-  if (analogRead(A0) < 600 && analogRead(A1) < 600 && analogRead(A2) < 600 && analogRead(A3) == 0) {
-    gCurrentPatternNumber = 0;
+  if (analogRead(A0) < 600 && analogRead(A1) < 600 && analogRead(A2) < 600 && analogRead(A3) < 600) {
+    gCurrentPatternNumber = 4;
     } 
   //lightning
   if (analogRead(A0) < 600 && analogRead(A1) < 600 && analogRead(A2) < 600 && analogRead(A3) > 600) {
@@ -90,12 +92,17 @@ void loop()
   if (analogRead(A0) < 600 && analogRead(A1) < 600 && analogRead(A2) > 600 && analogRead(A3) > 600) {
     gCurrentPatternNumber = 3;
     } 
-  if (analogRead(A0) < 600 && analogRead(A1) > 600 && analogRead(A2) < 600 && analogRead(A3) == 0) {
+  if (analogRead(A0) < 600 && analogRead(A1) > 600 && analogRead(A2) < 600 && analogRead(A3) < 600) {
     gCurrentPatternNumber = 4;
     } 
   if (analogRead(A0) < 600 && analogRead(A1) > 600 && analogRead(A2) < 600 && analogRead(A3) > 600) {
     gCurrentPatternNumber = 5;
     } 
+  if (analogRead(A4) > 600) {
+    notif = true;
+    } else {
+      notif = false;
+      }
 
   
   
@@ -124,7 +131,9 @@ void nextPattern()
 }
 
 void defaultMode() {
-  sinelon();
+ // sinelon();
+  bpm();
+  //juggle();
   }
 
 void rainbow() 
@@ -133,14 +142,29 @@ void rainbow()
   fill_rainbow( leds, NUM_LEDS, gHue, 7);
 }
 
+
+void clouds() {
+  for (int i = 109; i < NUM_LEDS; i++) {
+    leds[i] = CRGB::DarkGray;
+    }
+
+    //Random, 95 - 109
+    for (int i = 0; i < 5; i++) {
+    int randPos = rand() % 13 + 95;
+    leds[randPos] += CRGB(128, 128, 128);
+    }
+    
+
+}
+
 void rain()
 {
-  for (int i = 110; i < NUM_LEDS; i++) {
-    leds[i] = CRGB::Gray;
-    }
+    
     for (int i = 0; i < 110; i++) {
     leds[i] = CRGB::Black;
     }
+
+clouds();
     
     //96, 80, 64, 48, 32, 16, 0
   
@@ -158,48 +182,50 @@ void rain()
 
 void lightning () {
   rain();
-  leds[96] = leds[80] = leds[64] = leds[49] = leds[34] = leds[18] = leds[2] = CRGB::White;
+      leds[96] = leds[80] = leds[64] = leds[49] = leds[34] = leds[18] = leds[2] = CRGB::Yellow;
+      leds[100] = leds[84] = leds[68] = leds[53] = leds[38] = leds[22] = leds[6] = CRGB::Yellow;
+      leds[100+4] = leds[84+4] = leds[68+4] = leds[53+4] = leds[38+4] = leds[22+4] = leds[6+4] = CRGB::Yellow;
+      leds[100+8] = leds[84+8] = leds[68+8] = leds[53+8] = leds[38+8] = leds[22+8] = leds[6+8] = CRGB::Yellow;
       FastLED.delay(150);
       leds[96] = leds[80] = leds[64] = leds[48] = leds[34] = leds[18] = leds[2] = CRGB::Black;
+      leds[100] = leds[84] = leds[68] = leds[53] = leds[38] = leds[22] = leds[6] = CRGB::Black;
+      leds[100+4] = leds[84+4] = leds[68+4] = leds[53+4] = leds[38+4] = leds[22+4] = leds[6+4] = CRGB::Black;
+      leds[100+8] = leds[84+8] = leds[68+8] = leds[53+8] = leds[38+8] = leds[22+8] = leds[6+8] = CRGB::Black;
       FastLED.delay(50);
-      leds[96] = leds[80] = leds[64] = leds[48] = leds[34] = leds[18] = leds[2] = CRGB::White;
+      leds[96] = leds[80] = leds[64] = leds[49] = leds[34] = leds[18] = leds[2] = CRGB::Yellow;
+      leds[100] = leds[84] = leds[68] = leds[53] = leds[38] = leds[22] = leds[6] = CRGB::Yellow;
+      leds[100+4] = leds[84+4] = leds[68+4] = leds[53+4] = leds[38+4] = leds[22+4] = leds[6+4] = CRGB::Yellow;
+      leds[100+8] = leds[84+8] = leds[68+8] = leds[53+8] = leds[38+8] = leds[22+8] = leds[6+8] = CRGB::Yellow;
       FastLED.delay(150);
       leds[96] = leds[80] = leds[64] = leds[48] = leds[34] = leds[18] = leds[2] = CRGB::Black;
+      leds[100] = leds[84] = leds[68] = leds[53] = leds[38] = leds[22] = leds[6] = CRGB::Black;
+      leds[100+4] = leds[84+4] = leds[68+4] = leds[53+4] = leds[38+4] = leds[22+4] = leds[6+4] = CRGB::Black;
+      leds[100+8] = leds[84+8] = leds[68+8] = leds[53+8] = leds[38+8] = leds[22+8] = leds[6+8] = CRGB::Black;
+      
+      
+
   }
 
 
 void snow () {
-  int positions[7];
-  int fullRotation = 141-127;
-
-    //Set all leds to blue
-   for (int i= 0; i < NUM_LEDS; i++) {
-     leds[i] = CRGB(0, 0, 255);
-   }
-
-  for (int i= 0; i < fullRotation/2; i++) {
-     positions[i] = fullRotation*random() + 127;
-     leds[ positions[i] ];
-     //led[ positions[i] ]
-  }
-
-  
-
-  while (true) {
-    for (int i = 0; i < fullRotation/2; i++) {
-      positions[i]  -= fullRotation;
-      if (positions[i] < 0) {
-        positions[i] = -1;
-        goto loopBreak;
-      }
-      leds[ positions[i] ] = CRGB(235, 235, 255);
+   for (int i = 0; i < 110; i++) {
+    leds[i] = CRGB::DarkBlue;
     }
 
-   FastLED.delay(5);
-  }
-
-  loopBreak: return;
+clouds();
+    
+    //96, 80, 64, 48, 32, 16, 0
   
+    for (int i = 96; i >= 0; i-=16) { 
+    leds[i+2] = leds[i+4] = leds[i+6] = leds[i+8] = leds[i+12] = leds[i+10] = leds[i+14] = leds[i] = CRGB::Gray;
+    //leds[i+2] = leds[i+4] = leds[i+6] = leds[i+8]
+    FastLED.delay(200);
+    if (i != 0) {
+    leds[i+2-16] = leds[i+4-16] = leds[i+6-16] = leds[i+8-16] = leds[i-16] = leds[i+12-16] = leds[i+10-16] = leds[i+14-16] = CRGB::Gray;}
+    leds[i+2] = leds[i+4] = leds[i+6] = leds[i+8] = leds[i+12] = leds[i+10] = leds[i+14]= leds[i] = CRGB::DarkBlue;
+    FastLED.delay(200);
+  
+}
 }
 
 
@@ -215,8 +241,15 @@ void blue_skies () {
 }
 
 void addSun () {
-  for (int i = 0; i < NUM_LEDS; i++) {
-  leds[i] = CRGB(230, 226, 48);
+  for (int j = 0; j < 16; j+= 4) {
+  for (int i = 128+j; i < 132+j; i++) {
+  leds[i] = CRGB::Yellow;
+  }
+  for (int i = 113+j; i < 115+j; i++) {
+  leds[i] = CRGB::Yellow;
+  }
+  leds[98+j] = CRGB::Yellow;
+  leds[127] = CRGB::Yellow;
   }
 }
 
@@ -225,26 +258,27 @@ void clearMode () {
   addSun();
 }
 
+
+
+
 void cloudy() {
-  blue_skies();
-  //Make top cloudy
-  for (int i = 127; i < NUM_LEDS; i++) {
-    leds[i] = CRGB(190, 190, 190);
-  }
 
-  FastLED.delay(100);
-
-  //Add some blobs of clouds
-  leds[50] = leds[51] = leds[36] = leds[37] = CRGB(190, 190, 190);
-
-  FastLED.delay(100);
-
-   //Add some blobs of clouds
-  leds[30] = leds[31] = leds[16] = leds[17] = CRGB(190, 190, 190);
-
-  FastLED.delay(100);
+  for (int i= 0; i < NUM_LEDS; i++) {
+     leds[i] = CRGB::DarkBlue;
+   }
+  
+  clouds();
+  FastLED.delay(2000);
+  
   
 }
+
+void notification () {
+  leds[124] = CRGB(abs(255-leds[124].r), abs(255-leds[124].g), (255-leds[124].b));
+  leds[120] = CRGB(abs(255-leds[120].r), abs(255-leds[120].g), (255-leds[120].b));
+  leds[116] = CRGB(abs(255-leds[116].r), abs(255-leds[116].g), (255-leds[116].b));
+  leds[112] = CRGB(abs(255-leds[112].r), abs(255-leds[112].g), (255-leds[112].b));
+  }
 
 
 void rainbowWithGlitter() 
@@ -275,6 +309,9 @@ void sinelon()
   fadeToBlackBy( leds, NUM_LEDS, 20);
   int pos = beatsin16( 13, 0, NUM_LEDS-1 );
   leds[pos] += CHSV( gHue, 255, 192);
+  if (notif) {
+    notification();
+    }
 }
 
 void bpm()
