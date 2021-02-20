@@ -80,7 +80,7 @@ void loop()
 
   //defaultMode
   if (analogRead(A0) < 600 && analogRead(A1) < 600 && analogRead(A2) < 600 && analogRead(A3) < 600) {
-    gCurrentPatternNumber = 4;
+    gCurrentPatternNumber = 0;
     } 
   //lightning
   if (analogRead(A0) < 600 && analogRead(A1) < 600 && analogRead(A2) < 600 && analogRead(A3) > 600) {
@@ -92,6 +92,7 @@ void loop()
   if (analogRead(A0) < 600 && analogRead(A1) < 600 && analogRead(A2) > 600 && analogRead(A3) > 600) {
     gCurrentPatternNumber = 3;
     } 
+    //this statement is causing trouble. Why?
   if (analogRead(A0) < 600 && analogRead(A1) > 600 && analogRead(A2) < 600 && analogRead(A3) < 600) {
     gCurrentPatternNumber = 4;
     } 
@@ -103,7 +104,7 @@ void loop()
     } else {
       notif = false;
       }
-  notif = true;
+  
   
   
   
@@ -258,7 +259,7 @@ void blue_skies () {
 }
 
 void addSun () {
-  for (int j = 0; j < 16; j+= 4) {
+  for (int j = 0; j <= 11; j+= 4) {
   for (int i = 128+j; i < 132+j; i++) {
   leds[i] = CRGB::Yellow;
   }
