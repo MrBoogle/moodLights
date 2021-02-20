@@ -75,9 +75,12 @@ void loop()
   Serial.println("---");*/
   //Could use map for better code but arduino barely has any memory
   // > 600 means pin is high
+
+  //defaultMode
   if (analogRead(A0) < 600 && analogRead(A1) < 600 && analogRead(A2) < 600 && analogRead(A3) == 0) {
     gCurrentPatternNumber = 0;
     } 
+  //lightning
   if (analogRead(A0) < 600 && analogRead(A1) < 600 && analogRead(A2) < 600 && analogRead(A3) > 600) {
     gCurrentPatternNumber = 1;
     } 
@@ -124,7 +127,6 @@ void defaultMode() {
   sinelon();
   }
 
->>>>>>> cc2a8bc7af99f373b187c9154ca6430c54f2f8d2
 void rainbow() 
 {
   // FastLED's built-in rainbow generator
@@ -213,7 +215,9 @@ void blue_skies () {
 }
 
 void addSun () {
+  for (int i = 0; i < NUM_LEDS; i++) {
   leds[i] = CRGB(230, 226, 48);
+  }
 }
 
 void clearMode () {
@@ -222,7 +226,7 @@ void clearMode () {
 }
 
 void cloudy() {
-  blueSkies();
+  blue_skies();
   //Make top cloudy
   for (int i = 127; i < NUM_LEDS; i++) {
     leds[i] = CRGB(190, 190, 190);
