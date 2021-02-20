@@ -50,7 +50,7 @@ void setup() {
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*SimplePatternList[])();
 
-SimplePatternList gPatterns = {defaultMode, lightning, rain, snow, clearMode, cloudy, ambient};
+SimplePatternList gPatterns = {defaultMode, lightning, rain, snow, clearMode, cloudy, off};
 SimplePatternList dPatterns = {Fire2012, juggle, bpm, sinelon};
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
@@ -104,6 +104,15 @@ void loop()
   if (analogRead(A0) < 600 && analogRead(A1) > 600 && analogRead(A2) < 600 && analogRead(A3) > 600) {
     gCurrentPatternNumber = 5;
     } 
+  //Turn off lamp
+  if (analogRead(A0) < 600 && analogRead(A1) > 600 && analogRead(A2) > 600 && analogRead(A3) < 600) {
+    gCurrentPatternNumber = 6;
+    }
+  if (analogRead(A0) < 600 && analogRead(A1) > 600 && analogRead(A2) > 600 && analogRead(A3) > 600) {
+    gCurrentPatternNumber = 0;
+    }
+
+    
   if (analogRead(A4) > 600) {
     notif = true;
     } else {
@@ -163,12 +172,18 @@ void clouds() {
     leds[randPos] += CRGB(128, 128, 128);
     }
 
-    if (notif) {
-    notification(255,0, 0);
-    }
+    /*if (notif) {
+    notification(255,0, 0, true);
+    }*/
     
 
 }
+void off () {
+  for (int i = 0; i < NUM_LEDS; i++) {
+    leds[i] = CRGB::Black;
+    }
+  }
+
 
 void rain()
 {
@@ -183,7 +198,7 @@ clouds();
   
     for (int i = 96; i >= 0; i-=16) { 
     leds[i+2] = leds[i+4] = leds[i+6] = leds[i+8] = leds[i+12] = leds[i+10] = leds[i+14] = leds[i] = CRGB::Blue;
-    //leds[i+2] = leds[i+4] = leds[i+6] = leds[i+8]
+    leds[i+2] = leds[i+4] = leds[i+6] = leds[i+8];
     FastLED.delay(200);
     if (i != 0) {
     leds[i+2-16] = leds[i+4-16] = leds[i+6-16] = leds[i+8-16] = leds[i-16] = leds[i+12-16] = leds[i+10-16] = leds[i+14-16] = CRGB::Blue;}
@@ -191,9 +206,9 @@ clouds();
     FastLED.delay(200);
     }
 
-    if (notif) {
-    notification(255, 0, 0);
-    }
+   /* if (notif) {
+    notification(255, 0, 0, true);
+    }*/
     
 }
 
@@ -219,9 +234,9 @@ void lightning () {
       leds[100+4] = leds[84+4] = leds[68+4] = leds[53+4] = leds[38+4] = leds[22+4] = leds[6+4] = CRGB::Black;
       leds[100+8] = leds[84+8] = leds[68+8] = leds[53+8] = leds[38+8] = leds[22+8] = leds[6+8] = CRGB::Black;
 
-      if (notif) {
-    notification(255, 0, 0);
-    }
+      /*if (notif) {
+    notification(255, 0, 0, true);
+    }*/
       
 
   }
@@ -246,9 +261,9 @@ clouds();
     FastLED.delay(200);
   
 }
-if (notif) {
-    notification(255, 0, 0);
-    }
+/*if (notif) {
+    notification(255, 0, 0, true);
+    }*/
 }
 
 
@@ -283,7 +298,7 @@ void clearMode () {
   blue_skies();
   addSun();
   if (notif) {
-    notification(255, 0, 0);
+    notification(255, 0, 0, true);
     }
 }
 
@@ -297,14 +312,14 @@ void cloudy() {
    }
   
   clouds();
-  FastLED.delay(2000);
+  //FastLED.delay(2000);
   
-  if (notif) {
-    notification(255, 0, 0);
-    }
+  /*if (notif) {
+    notification(255, 0, 0, true);
+    }*/
 }
 
-void notification (int r, int g, int b) {
+void notification (int r, int g, int b, bool moveN) {
   /*leds[81] = CRGB(r, g, b);
   leds[77] = CRGB(r, g, b);
   leds[73] = CRGB(r, g, b);
@@ -312,7 +327,10 @@ void notification (int r, int g, int b) {
 
 
   fadeToBlackBy( leds, NUM_LEDS, 20);
+ 
+  
   int pos = beatsin16( 5, 0, NUM_LEDS-1 );
+  
   leds[pos] = CRGB( r, g, b);
   
   }
@@ -347,7 +365,7 @@ void sinelon()
   int pos = beatsin16( 13, 0, NUM_LEDS-1 );
   leds[pos] += CHSV( gHue, 255, 192);
   if (notif) {
-    notification(255, 255, 255);
+    notification(255, 255, 255, false);
     }
 }
 
@@ -361,7 +379,7 @@ void bpm()
     leds[i] = ColorFromPalette(palette, gHue+(i*2), beat-gHue+(i*10));
   }
   if (notif) {
-    notification(255, 255, 255);
+    notification(255, 255, 255, false);
     }
 }
 
@@ -375,7 +393,7 @@ void juggle() {
   }
 
   if (notif) {
-    notification(0, 0, 0);
+    notification(0, 0, 0, true);
     }
 }
 
@@ -439,7 +457,7 @@ void Fire2012()
     }
 
     if (notif) {
-    notification(0 ,0, 255);
+    notification(0 ,0, 255, true);
     }
 }
 
