@@ -103,7 +103,7 @@ void loop()
     } else {
       notif = false;
       }
-
+  notif = true;
   
   
   
@@ -153,6 +153,10 @@ void clouds() {
     int randPos = rand() % 13 + 95;
     leds[randPos] += CRGB(128, 128, 128);
     }
+
+    if (notif) {
+    notification(255,0, 0);
+    }
     
 
 }
@@ -176,6 +180,10 @@ clouds();
     leds[i+2-16] = leds[i+4-16] = leds[i+6-16] = leds[i+8-16] = leds[i-16] = leds[i+12-16] = leds[i+10-16] = leds[i+14-16] = CRGB::Blue;}
     leds[i+2] = leds[i+4] = leds[i+6] = leds[i+8] = leds[i+12] = leds[i+10] = leds[i+14]= leds[i] = CRGB::Black;
     FastLED.delay(200);
+    }
+
+    if (notif) {
+    notification(255, 0, 0);
     }
     
 }
@@ -201,7 +209,10 @@ void lightning () {
       leds[100] = leds[84] = leds[68] = leds[53] = leds[38] = leds[22] = leds[6] = CRGB::Black;
       leds[100+4] = leds[84+4] = leds[68+4] = leds[53+4] = leds[38+4] = leds[22+4] = leds[6+4] = CRGB::Black;
       leds[100+8] = leds[84+8] = leds[68+8] = leds[53+8] = leds[38+8] = leds[22+8] = leds[6+8] = CRGB::Black;
-      
+
+      if (notif) {
+    notification(255, 0, 0);
+    }
       
 
   }
@@ -226,6 +237,9 @@ clouds();
     FastLED.delay(200);
   
 }
+if (notif) {
+    notification(255, 0, 0);
+    }
 }
 
 
@@ -238,6 +252,9 @@ void blue_skies () {
    for (int i= 0; i < NUM_LEDS; i++) {
      leds[i] = CRGB(0, 0, 255);
    }
+   if (notif) {
+    notification(255, 0, 0);
+    }
 }
 
 void addSun () {
@@ -251,11 +268,18 @@ void addSun () {
   leds[98+j] = CRGB::Yellow;
   leds[127] = CRGB::Yellow;
   }
+
+  if (notif) {
+    notification(255, 0, 0);
+    }
 }
 
 void clearMode () {
   blue_skies();
   addSun();
+  if (notif) {
+    notification(255, 0, 0);
+    }
 }
 
 
@@ -270,14 +294,16 @@ void cloudy() {
   clouds();
   FastLED.delay(2000);
   
-  
+  if (notif) {
+    notification(255, 0, 0);
+    }
 }
 
-void notification () {
-  leds[124] = CRGB(abs(255-leds[124].r), abs(255-leds[124].g), (255-leds[124].b));
-  leds[120] = CRGB(abs(255-leds[120].r), abs(255-leds[120].g), (255-leds[120].b));
-  leds[116] = CRGB(abs(255-leds[116].r), abs(255-leds[116].g), (255-leds[116].b));
-  leds[112] = CRGB(abs(255-leds[112].r), abs(255-leds[112].g), (255-leds[112].b));
+void notification (int r, int g, int b) {
+  leds[81] = CRGB(r, g, b);
+  leds[77] = CRGB(r, g, b);
+  leds[73] = CRGB(r, g, b);
+  leds[69] = CRGB(r, g, b);
   }
 
 
@@ -310,7 +336,7 @@ void sinelon()
   int pos = beatsin16( 13, 0, NUM_LEDS-1 );
   leds[pos] += CHSV( gHue, 255, 192);
   if (notif) {
-    notification();
+    notification(255, 255, 255);
     }
 }
 
