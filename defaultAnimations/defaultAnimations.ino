@@ -50,7 +50,7 @@ void setup() {
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*SimplePatternList[])();
 
-SimplePatternList gPatterns = {defaultMode, lightning, rain, snow, clearMode, clouds, ambient};
+SimplePatternList gPatterns = {defaultMode, lightning, rain, snow, clearMode, ambient};
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 uint8_t gHue = 0; // rotating "base color" used by many of the patterns
@@ -68,11 +68,11 @@ void loop()
       }
 
   delay(50);
-  Serial.println(analogRead(A0));
+  /*Serial.println(analogRead(A0));
   Serial.println(analogRead(A1));
   Serial.println(analogRead(A2));
   Serial.println(analogRead(A3));
-  Serial.println("---");
+  Serial.println("---");*/
   //Could use map for better code but arduino barely has any memory
   // > 600 means pin is high
   if (analogRead(A0) < 600 && analogRead(A1) < 600 && analogRead(A2) < 600 && analogRead(A3) == 0) {
@@ -124,13 +124,7 @@ void defaultMode() {
   sinelon();
   }
 
-void clearMode() {
-  
-  }
 
-void clouds() {
-  
-  }
 
 void rainbow() 
 {
