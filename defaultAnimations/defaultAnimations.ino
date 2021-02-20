@@ -50,7 +50,7 @@ void setup() {
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*SimplePatternList[])();
 
-SimplePatternList gPatterns = {defaultMode, lightning, rain, snow, clearMode, ambient};
+SimplePatternList gPatterns = {defaultMode, lightning, rain, snow, clearMode, cloudy, ambient};
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 uint8_t gHue = 0; // rotating "base color" used by many of the patterns
@@ -124,8 +124,7 @@ void defaultMode() {
   sinelon();
   }
 
-
-
+>>>>>>> cc2a8bc7af99f373b187c9154ca6430c54f2f8d2
 void rainbow() 
 {
   // FastLED's built-in rainbow generator
@@ -200,6 +199,49 @@ void snow () {
   loopBreak: return;
   
 }
+
+
+/*
+ * Cloudy and Clear Section
+ */
+
+void blue_skies () {
+   //Set all leds to blue
+   for (int i= 0; i < NUM_LEDS; i++) {
+     leds[i] = CRGB(0, 0, 255);
+   }
+}
+
+void addSun () {
+  leds[i] = CRGB(230, 226, 48);
+}
+
+void clearMode () {
+  blue_skies();
+  addSun();
+}
+
+void cloudy() {
+  blueSkies();
+  //Make top cloudy
+  for (int i = 127; i < NUM_LEDS; i++) {
+    leds[i] = CRGB(190, 190, 190);
+  }
+
+  FastLED.delay(100);
+
+  //Add some blobs of clouds
+  leds[50] = leds[51] = leds[36] = leds[37] = CRGB(190, 190, 190);
+
+  FastLED.delay(100);
+
+   //Add some blobs of clouds
+  leds[30] = leds[31] = leds[16] = leds[17] = CRGB(190, 190, 190);
+
+  FastLED.delay(100);
+  
+}
+
 
 void rainbowWithGlitter() 
 {
